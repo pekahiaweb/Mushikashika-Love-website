@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mushikashika Love — A Harare Story</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,300&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/framer-motion/10.18.0/framer-motion.umd.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --night: #0A0A0F;
+    --gold: #D4A017;
+    --rose: #C4727A;
+    --mist: #A8B2C1;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    background: #0A0A0F;
+    color: #A8B2C1;
+    font-family: 'Poppins', sans-serif;
+    overflow-x: hidden;
+  }
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: #0A0A0F; }
+  ::-webkit-scrollbar-thumb { background: rgba(212,160,23,0.35); border-radius: 3px; }
+
+  /* Glass */
+  .glass {
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  .glass-pill {
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(212,160,23,0.4);
+    border-radius: 9999px;
+  }
+
+  /* ── NAVBAR ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 18px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: background 0.4s, border-color 0.4s, backdrop-filter 0.4s;
+  }
+  nav.scrolled {
+    background: rgba(10,10,15,0.88);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+  }
+  .nav-logo {
+    width: 42px; height: 42px; border-radius: 50%;
+    background: rgba(212,160,23,0.12);
+    border: 1px solid rgba(212,160,23,0.4);
+    display: flex; align-items: center; justify-content: center;
+    text-decoration: none;
+  }
+  .nav-logo span {
+    font-weight: 900; font-size: 13px; color: #D4A017; letter-spacing: -0.5px;
+  }
+  .nav-links { display: flex; align-items: center; gap: 32px; }
+  .nav-links a {
+    color: #A8B2C1; text-decoration: none;
+    font-size: 13px; font-weight: 600; letter-spacing: 0.05em;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: #D4A017; }
+  .btn-updates {
+    padding: 9px 22px; font-size: 13px; font-weight: 600;
+    color: #D4A017; letter-spacing: 0.05em; text-decoration: none;
+    transition: box-shadow 0.3s, border-color 0.3s;
+  }
+  .btn-updates:hover {
+    box-shadow: 0 0 20px rgba(212,160,23,0.4);
+    border-color: rgba(212,160,23,0.7);
+  }
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 6px; }
+  .hamburger span { display: block; width: 24px; height: 2px; background: #D4A017; transition: all 0.3s; }
+  .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+  /* Mobile overlay */
+  .mobile-menu {
+    position: fixed; inset: 0; z-index: 99;
+    background: rgba(10,10,15,0.96);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 32px;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.4s;
+  }
+  .mobile-menu.open { opacity: 1; pointer-events: all; }
+  .mobile-menu a {
+    font-size: 2rem; font-weight: 700; color: #A8B2C1; text-decoration: none;
+    transition: color 0.2s;
+  }
+  .mobile-menu a:hover { color: #D4A017; }
+
+  /* ── HERO ── */
+  #hero {
+    position: relative; min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 40%, rgba(212,160,23,0.06) 0%, transparent 60%),
+                linear-gradient(180deg, #0A0A0F 0%, #0D0A14 50%, #0A0A0F 100%);
+  }
+  #particle-canvas { position: absolute; inset: 0; pointer-events: none; }
+
+  .floating-fragment {
+    position: absolute; pointer-events: none;
+    padding: 8px 16px;
+    font-size: 10px; font-weight: 600; letter-spacing: 0.3em; text-transform: uppercase; color: #A8B2C1;
+    animation: fragmentFloat 7s ease-in-out infinite;
+  }
+  @keyframes fragmentFloat {
+    0%,100% { transform: translateY(0) translateX(0); opacity: 0.6; }
+    50% { transform: translateY(-18px) translateX(4px); opacity: 0.9; }
+  }
+
+  .hero-content {
+    position: relative; z-index: 10;
+    text-align: center; padding: 0 24px;
+    display: flex; flex-direction: column; align-items: center;
+    animation: heroReveal 0.9s ease-out forwards;
+    opacity: 0;
+  }
+  @keyframes heroReveal { to { opacity: 1; } }
+
+  .hero-title-gold {
+    font-size: clamp(3rem, 10vw, 9rem);
+    font-weight: 900; line-height: 1; letter-spacing: -0.02em;
+    background: linear-gradient(90deg, #D4A017 0%, #D4A017 40%, rgba(255,220,90,0.95) 50%, #D4A017 60%, #D4A017 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 4s linear infinite;
+  }
+  @keyframes shimmer {
+    0% { background-position: 200% center; }
+    100% { background-position: -200% center; }
+  }
+  .hero-title-rose {
+    font-size: clamp(3rem, 10vw, 9rem);
+    font-weight: 900; line-height: 1; letter-spacing: -0.02em;
+    color: #C4727A;
+    text-shadow: 0 0 60px rgba(196,114,122,0.25);
+  }
+  .hero-tagline {
+    margin-top: 32px; font-size: clamp(1rem, 2.5vw, 1.2rem);
+    font-weight: 300; font-style: italic; color: #A8B2C1; letter-spacing: 0.05em;
+    animation: fadeUp 0.8s 0.6s ease-out both;
+  }
+  .hero-ctas {
+    margin-top: 40px; display: flex; flex-wrap: wrap; gap: 16px; justify-content: center;
+    animation: fadeUp 0.8s 0.8s ease-out both;
+  }
+  .btn-gold {
+    padding: 14px 34px; border-radius: 9999px;
+    background: #D4A017; color: #0A0A0F;
+    font-weight: 700; font-size: 13px; letter-spacing: 0.15em; text-transform: uppercase;
+    text-decoration: none; transition: box-shadow 0.3s, transform 0.2s;
+    border: none; cursor: pointer;
+  }
+  .btn-gold:hover { box-shadow: 0 0 30px rgba(212,160,23,0.5); transform: translateY(-1px); }
+  .btn-glass-outline {
+    padding: 13px 34px; border-radius: 9999px;
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(212,160,23,0.4);
+    backdrop-filter: blur(20px); color: #D4A017;
+    font-weight: 700; font-size: 13px; letter-spacing: 0.15em; text-transform: uppercase;
+    text-decoration: none; transition: box-shadow 0.3s, transform 0.2s;
+  }
+  .btn-glass-outline:hover { box-shadow: 0 0 20px rgba(212,160,23,0.3); transform: translateY(-1px); }
+
+  .scroll-indicator {
+    position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    animation: fadeUp 0.8s 1.4s ease-out both;
+  }
+  .scroll-indicator span { font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(168,178,193,0.4); font-weight: 600; }
+  .chevron { animation: chevBounce 1.5s ease-in-out infinite; }
+  @keyframes chevBounce {
+    0%,100% { transform: translateY(0); opacity: 0.4; }
+    50% { transform: translateY(8px); opacity: 1; }
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(32px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .reveal {
+    opacity: 0; transform: translateY(40px);
+    transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+  }
+  .reveal.visible { opacity: 1; transform: none; }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+
+  /* ── MARQUEE ── */
+  .marquee-wrap {
+    overflow: hidden;
+    border-top: 1px solid rgba(212,160,23,0.15);
+    border-bottom: 1px solid rgba(212,160,23,0.15);
+    background: rgba(212,160,23,0.03);
+    padding: 18px 0;
+  }
+  .marquee-track {
+    display: flex; white-space: nowrap;
+    animation: marqueeAnim 28s linear infinite;
+  }
+  @keyframes marqueeAnim {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  .marquee-item {
+    display: inline-flex; align-items: center;
+  }
+  .marquee-item span.text {
+    font-size: 11px; font-weight: 900; letter-spacing: 0.35em;
+    text-transform: uppercase; color: #D4A017; padding: 0 24px;
+  }
+  .marquee-item span.dot { color: rgba(212,160,23,0.4); font-size: 11px; }
+
+  /* ── SECTIONS ── */
+  section { padding: 112px 24px; }
+  .section-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.3em; text-transform: uppercase;
+    color: #D4A017; text-align: center; margin-bottom: 16px;
+  }
+  .section-heading {
+    font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 900; color: #fff;
+    text-align: center; line-height: 1.15; margin-bottom: 64px;
+  }
+  .accent-rose { color: #C4727A; }
+  .accent-gold { color: #D4A017; }
+  .max-w { max-width: 1100px; margin: 0 auto; }
+  .max-w-md { max-width: 800px; margin: 0 auto; }
+
+  /* ── STORY ── */
+  .story-panel { padding: clamp(32px, 5vw, 64px); }
+  .story-inner { display: grid; grid-template-columns: 2fr 3fr; gap: 64px; }
+  .story-quote {
+    font-size: clamp(1.3rem, 2.5vw, 1.9rem); font-weight: 900; color: #fff; line-height: 1.3;
+  }
+  .story-rule { display: flex; align-items: center; gap: 12px; margin-top: 24px; }
+  .story-rule .line { width: 32px; height: 2px; background: #D4A017; }
+  .story-rule .label { font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: #D4A017; font-weight: 600; }
+  .story-prose { color: #A8B2C1; font-size: 15px; line-height: 1.8; display: flex; flex-direction: column; gap: 20px; }
+  .story-prose em { color: #C4727A; font-style: italic; }
+
+  /* ── CHARACTERS ── */
+  .chars-track {
+    display: flex; gap: 24px;
+    overflow-x: auto; scroll-snap-type: x mandatory;
+    scrollbar-width: none; padding-bottom: 8px;
+  }
+  .chars-track::-webkit-scrollbar { display: none; }
+  .char-card {
+    min-width: 280px; flex-shrink: 0;
+    padding: 24px; scroll-snap-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: default;
+  }
+  .char-card:hover {
+    transform: perspective(800px) rotateX(4deg) rotateY(4deg) scale(1.03);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+  }
+  .char-avatar {
+    width: 100%; height: 160px; border-radius: 12px;
+    margin-bottom: 20px; position: relative; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .char-avatar-letter {
+    font-size: 5rem; font-weight: 900; opacity: 0.2;
+    position: absolute;
+  }
+  .char-avatar-shadow {
+    position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 64px; height: 96px; border-radius: 32px 32px 0 0; opacity: 0.12;
+  }
+  .char-role {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.25em;
+    text-transform: uppercase; margin-bottom: 4px;
+  }
+  .char-name { font-size: 1.6rem; font-weight: 900; color: #fff; margin-bottom: 4px; }
+  .char-origin {
+    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: rgba(168,178,193,0.45); font-weight: 600; margin-bottom: 16px;
+  }
+  .char-desc { font-size: 13px; color: #A8B2C1; line-height: 1.7; }
+
+  /* ── WORLD ── */
+  #world { background: linear-gradient(180deg, #0A0A0F 0%, rgba(212,160,23,0.015) 50%, #0A0A0F 100%); }
+  .world-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .world-tile {
+    padding: 32px;
+    transition: border-color 0.3s;
+  }
+  .world-tile:hover { border-color: rgba(212,160,23,0.3) !important; }
+  .world-tile:hover .tile-icon { transform: scale(1.1); }
+  .tile-icon { display: inline-block; margin-bottom: 24px; transition: transform 0.3s; }
+  .tile-title { font-size: 1.2rem; font-weight: 900; color: #fff; margin-bottom: 12px; }
+  .tile-desc { font-size: 13px; color: #A8B2C1; line-height: 1.7; }
+
+  /* ── TRAILER ── */
+  #trailer { position: relative; overflow: hidden; }
+  .trailer-orb-gold {
+    position: absolute; top: 50%; left: 25%; transform: translate(-50%,-50%);
+    width: 400px; height: 400px; border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(212,160,23,0.07) 0%, transparent 70%);
+    filter: blur(40px); pointer-events: none;
+  }
+  .trailer-orb-rose {
+    position: absolute; top: 50%; right: 20%; transform: translate(50%,-50%);
+    width: 400px; height: 400px; border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(196,114,122,0.06) 0%, transparent 70%);
+    filter: blur(40px); pointer-events: none;
+  }
+  .trailer-frame {
+    position: relative; width: 100%; max-width: 900px; margin: 0 auto;
+    aspect-ratio: 16/9; cursor: pointer;
+    overflow: hidden;
+  }
+  .trailer-bg {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(212,160,23,0.08), rgba(10,10,15,0.92), rgba(196,114,122,0.07));
+  }
+  .trailer-scanlines {
+    position: absolute; inset: 0;
+    background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.04) 2px, rgba(255,255,255,0.04) 3px);
+    opacity: 1;
+  }
+  .trailer-inner {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  .trailer-subtitle {
+    font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase;
+    color: rgba(168,178,193,0.3); font-weight: 600; margin-bottom: 32px;
+  }
+  .play-btn {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: rgba(212,160,23,0.15); border: 1px solid rgba(212,160,23,0.5);
+    display: flex; align-items: center; justify-content: center;
+    backdrop-filter: blur(8px); position: relative;
+    transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
+    box-shadow: 0 0 40px rgba(212,160,23,0.15);
+  }
+  .trailer-frame:hover .play-btn {
+    background: rgba(212,160,23,0.28); box-shadow: 0 0 50px rgba(212,160,23,0.35);
+    transform: scale(1.08);
+  }
+  .play-btn svg { margin-left: 4px; }
+  .play-ping {
+    position: absolute; inset: 0; border-radius: 50%;
+    border: 1px solid rgba(212,160,23,0.3);
+    animation: ping 2s ease-in-out infinite;
+  }
+  @keyframes ping {
+    0%,100% { transform: scale(1); opacity: 0.4; }
+    50% { transform: scale(1.4); opacity: 0; }
+  }
+  /* corner accents */
+  .corner { position: absolute; width: 24px; height: 24px; }
+  .corner.tl { top: 16px; left: 16px; border-top: 1px solid rgba(212,160,23,0.4); border-left: 1px solid rgba(212,160,23,0.4); }
+  .corner.tr { top: 16px; right: 16px; border-top: 1px solid rgba(212,160,23,0.4); border-right: 1px solid rgba(212,160,23,0.4); }
+  .corner.bl { bottom: 16px; left: 16px; border-bottom: 1px solid rgba(212,160,23,0.4); border-left: 1px solid rgba(212,160,23,0.4); }
+  .corner.br { bottom: 16px; right: 16px; border-bottom: 1px solid rgba(212,160,23,0.4); border-right: 1px solid rgba(212,160,23,0.4); }
+  .trailer-date {
+    text-align: center; margin-top: 24px;
+    font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase;
+    color: rgba(168,178,193,0.35); font-weight: 600;
+  }
+
+  /* ── PRESS ── */
+  .press-panel { padding: clamp(40px, 6vw, 80px); text-align: center; }
+  .press-quote {
+    font-size: clamp(1.6rem, 4vw, 2.5rem); font-weight: 900; color: #fff;
+    line-height: 1.2; margin-bottom: 48px;
+  }
+  .laurels {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-bottom: 48px;
+  }
+  .laurel-badge {
+    padding: 20px 28px;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    min-width: 160px;
+  }
+  .laurel-badge .lbl {
+    font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: rgba(168,178,193,0.45); font-weight: 600;
+  }
+  .laurel-badge .name {
+    font-size: 12px; font-weight: 700; color: #A8B2C1; text-align: center; line-height: 1.4;
+  }
+  .updates-row {
+    display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; max-width: 440px; margin: 0 auto;
+  }
+  .updates-input {
+    flex: 1; min-width: 200px; padding: 13px 20px; border-radius: 12px;
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+    color: #fff; font-size: 14px; font-family: inherit;
+    outline: none; transition: border-color 0.2s;
+  }
+  .updates-input:focus { border-color: rgba(212,160,23,0.5); }
+  .updates-input::placeholder { color: rgba(168,178,193,0.35); }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid rgba(255,255,255,0.07);
+    background: rgba(10,10,15,0.98);
+    padding: 64px 24px;
+    display: flex; flex-direction: column; align-items: center; gap: 32px;
+  }
+  .footer-brand {
+    display: flex; align-items: center; gap: 12px; text-decoration: none;
+  }
+  .footer-logo {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: rgba(212,160,23,0.1); border: 1px solid rgba(212,160,23,0.3);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .footer-logo span { font-size: 14px; font-weight: 900; color: #D4A017; }
+  .footer-name { font-size: 13px; font-weight: 900; color: #fff; letter-spacing: 0.15em; text-transform: uppercase; }
+  .socials { display: flex; gap: 12px; }
+  .social-btn {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+    display: flex; align-items: center; justify-content: center;
+    color: #A8B2C1; text-decoration: none;
+    transition: color 0.2s, transform 0.2s, box-shadow 0.2s;
+  }
+  .social-btn:hover { color: #D4A017; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(212,160,23,0.2); }
+  .footer-divider {
+    width: 200px; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(212,160,23,0.3), transparent);
+  }
+  .footer-copy { font-size: 12px; color: rgba(168,178,193,0.45); letter-spacing: 0.05em; text-align: center; }
+  .footer-ssadza { font-size: 11px; color: rgba(168,178,193,0.28); letter-spacing: 0.05em; margin-top: 6px; text-align: center; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    nav { padding: 16px 20px; }
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    section { padding: 80px 16px; }
+    .story-inner { grid-template-columns: 1fr; gap: 40px; }
+    .story-quote { font-size: 1.4rem; }
+    .world-grid { grid-template-columns: 1fr; }
+    .chars-track { padding-bottom: 16px; }
+    .section-heading { font-size: 1.8rem; margin-bottom: 40px; }
+    .laurels { gap: 12px; }
+    .floating-fragment { display: none; }
+  }
+  @media (min-width: 1024px) {
+    .chars-track {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      overflow: visible;
+    }
+    .char-card { min-width: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <a href="#" class="nav-logo"><span>ML</span></a>
+  <div class="nav-links">
+    <a href="#story">Story</a>
+    <a href="#characters">Characters</a>
+    <a href="#world">World</a>
+    <a href="#trailer">Watch Trailer</a>
+    <a href="#press">Press</a>
+    <a href="#updates" class="glass-pill btn-updates">Get Updates</a>
+  </div>
+  <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#story" onclick="closeMobileMenu()">Story</a>
+  <a href="#characters" onclick="closeMobileMenu()">Characters</a>
+  <a href="#world" onclick="closeMobileMenu()">World</a>
+  <a href="#trailer" onclick="closeMobileMenu()">Watch Trailer</a>
+  <a href="#press" onclick="closeMobileMenu()">Press</a>
+  <a href="#updates" class="btn-gold" style="margin-top:16px" onclick="closeMobileMenu()">Get Updates</a>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <canvas id="particle-canvas"></canvas>
+
+  <!-- Floating fragments -->
+  <div class="floating-fragment glass" style="left:9%;top:30%;animation-delay:0s">Harare, Zimbabwe</div>
+  <div class="floating-fragment glass" style="left:72%;top:22%;animation-delay:1.2s">Romance. Risk. Hustle.</div>
+  <div class="floating-fragment glass" style="left:80%;top:63%;animation-delay:2.1s">Coming Soon</div>
+  <div class="floating-fragment glass" style="left:8%;top:68%;animation-delay:0.8s">2025</div>
+  <div class="floating-fragment glass" style="left:52%;top:76%;animation-delay:1.7s">Romantic Crime Comedy</div>
+
+  <div class="hero-content">
+    <h1 class="hero-title-gold">MUSHIKASHIKA</h1>
+    <h1 class="hero-title-rose">LOVE</h1>
+    <p class="hero-tagline">She came for love. She found Harare.</p>
+    <div class="hero-ctas">
+      <a href="#trailer" class="btn-gold">Watch Trailer</a>
+      <a href="#story" class="btn-glass-outline">Read the Story</a>
+    </div>
+  </div>
+
+  <div class="scroll-indicator">
+    <span>Scroll</span>
+    <svg class="chevron" width="20" height="20" viewBox="0 0 20 20" fill="none">
+      <path d="M5 8L10 13L15 8" stroke="rgba(212,160,23,0.6)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track" id="marqueeTrack"></div>
+</div>
+
+<!-- STORY -->
+<section id="story">
+  <div class="max-w">
+    <p class="section-label reveal">The Story</p>
+    <div class="glass story-panel reveal">
+      <div class="story-inner">
+        <div>
+          <p class="story-quote">"An online romance. A loan shark's shadow. And a city that never lets you leave clean."</p>
+          <div class="story-rule">
+            <div class="line"></div>
+            <span class="label">Logline</span>
+          </div>
+        </div>
+        <div class="story-prose">
+          <p>Nandi thought she'd fallen in love with Thabo — a charming, attentive man she met through her phone screen. For six months, he sent voice notes at midnight, remembered her favourite playlist, and promised to fly her to Zimbabwe for New Year's. She came with a suitcase full of hope. What she found was Harare.</p>
+          <p>Tafa drives a mushikashika — an unlicensed taxi threading through Harare's backstreets like a man who knows exactly where every secret is buried. He's funny, sharp, and deeply in debt to Micho: a loan shark who owns half the informal economy and all of Tafa's future. When Tafa is sent to intercept Nandi at the airport, what begins as an errand becomes the most complicated fare he's ever taken.</p>
+          <p>Part romance, part chase, all Harare — <em>Mushikashika Love</em> is a film about the difference between the life you perform online and the one you have to live in the streets. Set against the city's golden-hour glow and electric night markets, it asks: when danger is this beautiful, how far will you go for real love?</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CHARACTERS -->
+<section id="characters">
+  <div class="max-w">
+    <p class="section-label reveal">Characters</p>
+    <h2 class="section-heading reveal">
+      Everyone in Harare<br>
+      <span class="accent-rose">plays two games at once.</span>
+    </h2>
+    <div class="chars-track">
+      <!-- Nandi -->
+      <div class="char-card glass reveal">
+        <div class="char-avatar" style="background:linear-gradient(180deg,rgba(196,114,122,0.2),rgba(196,114,122,0.02))">
+          <span class="char-avatar-letter" style="color:#C4727A">N</span>
+          <div class="char-avatar-shadow" style="background:#C4727A"></div>
+        </div>
+        <p class="char-role" style="color:#C4727A">The Visitor</p>
+        <h3 class="char-name">Nandi</h3>
+        <p class="char-origin">Johannesburg, South Africa</p>
+        <p class="char-desc">A sharp-tongued logistics manager who trusted her heart over her instincts. She came to Harare chasing love and won't leave until she finds the truth.</p>
+      </div>
+      <!-- Tafa -->
+      <div class="char-card glass reveal reveal-delay-1">
+        <div class="char-avatar" style="background:linear-gradient(180deg,rgba(212,160,23,0.2),rgba(212,160,23,0.02))">
+          <span class="char-avatar-letter" style="color:#D4A017">T</span>
+          <div class="char-avatar-shadow" style="background:#D4A017"></div>
+        </div>
+        <p class="char-role" style="color:#D4A017">The Driver</p>
+        <h3 class="char-name">Tafa</h3>
+        <p class="char-origin">Mbare, Harare</p>
+        <p class="char-desc">Knows every pothole in Harare's streets and every loophole in its unspoken rules. Loyal to a fault — which is exactly why Micho owns him.</p>
+      </div>
+      <!-- Micho -->
+      <div class="char-card glass reveal reveal-delay-2">
+        <div class="char-avatar" style="background:linear-gradient(180deg,rgba(168,178,193,0.2),rgba(168,178,193,0.02))">
+          <span class="char-avatar-letter" style="color:#A8B2C1">M</span>
+          <div class="char-avatar-shadow" style="background:#A8B2C1"></div>
+        </div>
+        <p class="char-role" style="color:#A8B2C1">The Loan Shark</p>
+        <h3 class="char-name">Micho</h3>
+        <p class="char-origin">Harare CBD</p>
+        <p class="char-desc">All warmth on the surface, all calculation underneath. He's never raised his voice in his life — he doesn't need to. Everyone already knows what's at stake.</p>
+      </div>
+      <!-- Chido -->
+      <div class="char-card glass reveal reveal-delay-3">
+        <div class="char-avatar" style="background:linear-gradient(180deg,rgba(212,160,23,0.15),rgba(196,114,122,0.05))">
+          <span class="char-avatar-letter" style="color:#D4A017">C</span>
+          <div class="char-avatar-shadow" style="background:#D4A017"></div>
+        </div>
+        <p class="char-role" style="color:#D4A017">The Ally</p>
+        <h3 class="char-name">Chido</h3>
+        <p class="char-origin">Harare North</p>
+        <p class="char-desc">Tafa's cousin, Nandi's unlikely confidante. Runs a street food stall that doubles as the neighbourhood news service. She knows everything — and shares it for the right price.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WORLD -->
+<section id="world">
+  <div class="max-w">
+    <p class="section-label reveal">The World</p>
+    <h2 class="section-heading reveal">
+      A city that lives<br>
+      <span class="accent-gold">between dusk and debt.</span>
+    </h2>
+    <p class="reveal" style="text-align:center;color:#A8B2C1;max-width:520px;margin:0 auto 64px;line-height:1.8;font-size:15px">
+      Harare is not a backdrop. It is a character. Every alley, every deal, every hesitation belongs to this city.
+    </p>
+    <div class="world-grid">
+      <div class="world-tile glass reveal">
+        <div class="tile-icon">
+          <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+            <path d="M18 4C10.268 4 4 10.268 4 18s6.268 14 14 14 14-6.268 14-14S25.732 4 18 4z" stroke="#D4A017" stroke-width="1.5"/>
+            <path d="M12 18h12M18 12v12" stroke="#D4A017" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="18" cy="18" r="3" fill="#D4A017" fill-opacity="0.3"/>
+          </svg>
+        </div>
+        <h3 class="tile-title">Harare Streets</h3>
+        <p class="tile-desc">From the golden avenues of Borrowdale to the kinetic hum of Mbare Musika, Harare moves at its own rhythm — beautiful, layered, and impossible to fake.</p>
+      </div>
+      <div class="world-tile glass reveal reveal-delay-1">
+        <div class="tile-icon">
+          <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+            <rect x="6" y="14" width="8" height="16" rx="2" stroke="#D4A017" stroke-width="1.5"/>
+            <rect x="14" y="10" width="8" height="20" rx="2" stroke="#D4A017" stroke-width="1.5"/>
+            <rect x="22" y="6" width="8" height="24" rx="2" stroke="#D4A017" stroke-width="1.5"/>
+            <path d="M6 30h24" stroke="#D4A017" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3 class="tile-title">The Hustle Economy</h3>
+        <p class="tile-desc">Mushikashika taxis, rooftop vendors, informal lenders — Harare's parallel economy runs on trust, nerve, and the unspoken knowledge of who you owe.</p>
+      </div>
+      <div class="world-tile glass reveal reveal-delay-2">
+        <div class="tile-icon">
+          <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+            <path d="M18 8c-5 0-9 4-9 9 0 3 1.5 5.5 4 7l5 6 5-6c2.5-1.5 4-4 4-7 0-5-4-9-9-9z" stroke="#C4727A" stroke-width="1.5"/>
+            <path d="M15 17l2 2 4-4" stroke="#C4727A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h3 class="tile-title">Love Under Pressure</h3>
+        <p class="tile-desc">When circumstances are this volatile, love stops being a luxury and becomes an act of defiance. Nandi and Tafa have no business falling for each other — which is exactly why they do.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRAILER -->
+<section id="trailer">
+  <div class="trailer-orb-gold"></div>
+  <div class="trailer-orb-rose"></div>
+  <div style="max-width:900px;margin:0 auto;position:relative;z-index:10">
+    <p class="section-label reveal">Official Trailer</p>
+    <h2 class="section-heading reveal" style="margin-bottom:40px">
+      Watch the Story<br><span class="accent-rose">Unfold.</span>
+    </h2>
+    <div class="trailer-frame glass reveal" id="trailerFrame">
+      <div class="trailer-bg"></div>
+      <div class="trailer-scanlines"></div>
+      <div class="trailer-inner">
+        <p class="trailer-subtitle">Mushikashika Love · 2025</p>
+        <div class="play-btn" id="playBtn">
+          <div class="play-ping"></div>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="#D4A017"><path d="M8 5v14l11-7L8 5z"/></svg>
+        </div>
+      </div>
+      <div class="corner tl"></div>
+      <div class="corner tr"></div>
+      <div class="corner bl"></div>
+      <div class="corner br"></div>
+    </div>
+    <p class="trailer-date reveal">Trailer · Coming 2025</p>
+  </div>
+</section>
+
+<!-- PRESS -->
+<section id="press">
+  <div class="max-w-md">
+    <p class="section-label reveal">Press & Recognition</p>
+    <div class="glass press-panel reveal">
+      <blockquote class="press-quote">
+        "A story Africa<br>
+        <span class="accent-rose">has been waiting</span><br>
+        to tell."
+      </blockquote>
+      <div class="laurels">
+        <div class="laurel-badge glass">
+          <svg width="40" height="32" viewBox="0 0 40 32" fill="none">
+            <path d="M8 16C4 12 4 6 8 4" stroke="#D4A017" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M6 20C2 18 1 12 4 9" stroke="#D4A017" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+            <path d="M32 16C36 12 36 6 32 4" stroke="#D4A017" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M34 20C38 18 39 12 36 9" stroke="#D4A017" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+            <circle cx="20" cy="16" r="2" fill="#D4A017" fill-opacity="0.3"/>
+            <path d="M14 28h12" stroke="#D4A017" stroke-width="1" stroke-linecap="round" opacity="0.4"/>
+          </svg>
+          <span class="lbl">Selection</span>
+          <span class="name">African Film Festival</span>
+        </div>
+        <div class="laurel-badge glass">
+          <svg width="40" height="32" viewBox="0 0 40 32" fill="none">
+            <path d="M8 16C4 12 4 6 8 4" stroke="#D4A017" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M32 16C36 12 36 6 32 4" stroke="#D4A017" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="20" cy="16" r="2" fill="#D4A017" fill-opacity="0.3"/>
+            <path d="M14 28h12" stroke="#D4A017" stroke-width="1" stroke-linecap="round" opacity="0.4"/>
+          </svg>
+          <span class="lbl">Official Entry</span>
+          <span class="name">Zimbabwe International</span>
+        </div>
+        <div class="laurel-badge glass">
+          <svg width="40" height="32" viewBox="0 0 40 32" fill="none">
+            <path d="M8 16C4 12 4 6 8 4" stroke="#D4A017" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M6 20C2 18 1 12 4 9" stroke="#D4A017" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+            <path d="M32 16C36 12 36 6 32 4" stroke="#D4A017" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M34 20C38 18 39 12 36 9" stroke="#D4A017" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+            <circle cx="20" cy="16" r="2" fill="#C4727A" fill-opacity="0.4"/>
+            <path d="M14 28h12" stroke="#D4A017" stroke-width="1" stroke-linecap="round" opacity="0.4"/>
+          </svg>
+          <span class="lbl">Supported By</span>
+          <span class="name">Swiss Embassy SSADZA Fund</span>
+        </div>
+        <div class="laurel-badge glass">
+          <svg width="40" height="32" viewBox="0 0 40 32" fill="none">
+            <path d="M8 16C4 12 4 6 8 4" stroke="#D4A017" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M32 16C36 12 36 6 32 4" stroke="#D4A017" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="20" cy="14" r="3" fill="#D4A017" fill-opacity="0.2" stroke="#D4A017" stroke-width="1"/>
+            <path d="M14 28h12" stroke="#D4A017" stroke-width="1" stroke-linecap="round" opacity="0.4"/>
+          </svg>
+          <span class="lbl">Development Grant</span>
+          <span class="name">Pan-African Cinema</span>
+        </div>
+      </div>
+
+      <p style="font-size:14px;color:#A8B2C1;margin-bottom:20px" id="updates">Stay close. The film is coming.</p>
+      <div class="updates-row">
+        <input type="email" placeholder="your@email.com" class="updates-input">
+        <button class="btn-gold" onclick="handleSubscribe(this)">Get Updates</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <a href="#" class="footer-brand">
+    <div class="footer-logo"><span>ML</span></div>
+    <span class="footer-name">Mushikashika Love</span>
+  </a>
+  <div class="socials">
+    <a href="#" class="social-btn" aria-label="Instagram">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="2" width="20" height="20" rx="5"/>
+        <circle cx="12" cy="12" r="5"/>
+        <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+      </svg>
+    </a>
+    <a href="#" class="social-btn" aria-label="YouTube">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.4a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/>
+        <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="currentColor" stroke="none"/>
+      </svg>
+    </a>
+    <a href="#" class="social-btn" aria-label="X / Twitter">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+      </svg>
+    </a>
+  </div>
+  <div class="footer-divider"></div>
+  <div>
+    <p class="footer-copy">© 2025 Mushikashika Love. All Rights Reserved.</p>
+    <p class="footer-ssadza">Supported by the Swiss Embassy SSADZA Fund</p>
+  </div>
+</footer>
+
+<script>
+// ── NAVBAR scroll behavior ──
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// ── HAMBURGER ──
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobileMenu');
+hamburger.addEventListener('click', () => {
+  hamburger.classList.toggle('open');
+  mobileMenu.classList.toggle('open');
+});
+function closeMobileMenu() {
+  hamburger.classList.remove('open');
+  mobileMenu.classList.remove('open');
+}
+
+// ── PARTICLE CANVAS ──
+(function initParticles() {
+  const canvas = document.getElementById('particle-canvas');
+  const ctx = canvas.getContext('2d');
+  function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+  const colors = ['#D4A017','#C4727A','#A8B2C1'];
+  const particles = Array.from({length: 80}, () => ({
+    x: Math.random() * window.innerWidth,
+    y: Math.random() * window.innerHeight,
+    vx: (Math.random() - 0.5) * 0.3,
+    vy: -Math.random() * 0.4 - 0.1,
+    r: Math.random() * 2 + 0.5,
+    color: colors[Math.floor(Math.random() * 3)],
+    opacity: Math.random() * 0.5 + 0.1,
+  }));
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = p.opacity;
+      ctx.fill();
+      p.x += p.vx; p.y += p.vy;
+      if (p.y < -5) p.y = canvas.height + 5;
+      if (p.x < -5) p.x = canvas.width + 5;
+      if (p.x > canvas.width + 5) p.x = -5;
+    });
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(animate);
+  }
+  animate();
+})();
+
+// ── MARQUEE ──
+(function buildMarquee() {
+  const items = ['DIRECTED BY PEKAHIA','ZIMBABWE','2025','ROMANTIC CRIME COMEDY','HARARE','MUSHIKASHIKA LOVE','SSADZA FUND','AFRICAN CINEMA'];
+  const track = document.getElementById('marqueeTrack');
+  const repeated = [...items, ...items, ...items, ...items];
+  track.innerHTML = repeated.map(t =>
+    `<span class="marquee-item"><span class="text">${t}</span><span class="dot">·</span></span>`
+  ).join('');
+})();
+
+// ── SCROLL REVEAL ──
+(function initReveal() {
+  const els = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }});
+  }, { threshold: 0.1, rootMargin: '-60px' });
+  els.forEach(el => observer.observe(el));
+})();
+
+// ── UPDATES SUBSCRIBE ──
+function handleSubscribe(btn) {
+  const input = btn.previousElementSibling;
+  if (!input.value || !input.value.includes('@')) {
+    input.style.borderColor = 'rgba(196,114,122,0.6)';
+    input.placeholder = 'Valid email please';
+    setTimeout(() => { input.style.borderColor = ''; input.placeholder = 'your@email.com'; }, 2000);
+    return;
+  }
+  btn.textContent = 'You\'re in ✓';
+  btn.style.background = '#A8B2C1';
+  input.value = '';
+}
+
+// ── TRAILER click ──
+document.getElementById('trailerFrame').addEventListener('click', () => {
+  const btn = document.getElementById('playBtn');
+  btn.innerHTML = '<span style="color:#D4A017;font-size:12px;font-weight:700;letter-spacing:0.1em">COMING SOON</span>';
+});
+</script>
+</body>
+</html>
